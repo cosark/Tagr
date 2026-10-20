@@ -10,9 +10,12 @@ import { SCAN_FILE_LIST_LIMIT } from '@/features/metadata/domain'
 import { useBulkFetchMusicBrainzCover } from '@/features/musicbrainz/hooks/use-bulk-fetch-musicbrainz-cover'
 import { useSmartPlaylists } from '@/features/smart-playlists/hooks/use-smart-playlists'
 import { buildBulkTargetFromSelection } from '@/features/songs/bulk-target-helpers'
+import { useCanManageTrash } from '@/features/trash/hooks/use-can-manage-trash'
+import { useTrashActions } from '@/features/trash/hooks/use-trash-actions'
 import { type Song } from '@/features/songs/domain'
 import { useBulkUpdateSongPicture } from '@/features/songs/hooks/use-bulk-update-song-picture'
 import { useBulkUpdateSongs } from '@/features/songs/hooks/use-bulk-update-songs'
+import { useSelectedView } from '@/hooks/use-selected-view'
 import { useBulkSelectionStore, useSelectionCount, useSelectionState } from '@/stores/bulk-selection-store'
 import { type BulkSummaryKind, useHomeStore } from '@/stores/home-store'
 import { BulkActionBarPill } from './bulk-action-bar-pill'
@@ -30,6 +33,7 @@ export function BulkActionBar({ loadedSongs }: BulkActionBarProps) {
   const tBulk = useTranslations('bulkEdit')
   const tFolders = useTranslations('folders')
   const tListens = useTranslations('listens')
+  const tTrash = useTranslations('trash')
 
   const selection = useSelectionState()
   const count = useSelectionCount()
@@ -49,6 +53,10 @@ export function BulkActionBar({ loadedSongs }: BulkActionBarProps) {
   const coverMutation = useBulkFetchMusicBrainzCover()
   const setCoverMutation = useBulkUpdateSongPicture()
 
+  const { selectedView } = useSelectedView()
+  const canManageTrash = useCanManageTrash()
+  const trashActions = useTrashActions()
+
   const playlists = useSmartPlaylists().data
   const playlistName = useMemo(() => {
     if (selection?.mode !== 'all-in-context') return null
@@ -63,8 +71,14 @@ export function BulkActionBar({ loadedSongs }: BulkActionBarProps) {
   const contextLabel = buildContextLabel(selection, {
     playlistName,
     allFoldersLabel: tFolders('allFolders'),
-    recentListensLabel: tListens('title')
+    recentListensLabel: tListens('title'),
+    trashLabel: tTrash('title')
   })
+
+  const runTrashAction = (action: 'moveToTrash' | 'restore' | 'deletePermanently') => {
+    const target = buildBulkTargetFromSelection(selection)
+    if (target) trashActions[action](target, count)
+  }
 
   const handleEditSubmit = (patch: BulkPatch) => {
     // Nothing touched means nothing to send — the route rejects an empty payload.
@@ -224,6 +238,10 @@ export function BulkActionBar({ loadedSongs }: BulkActionBarProps) {
         onEdit={() => setEditOpen(true)}
         onSetCover={() => setCoverPickerOpen(true)}
         onFetchCovers={() => setConfirmKind('cover')}
+        trashMode={!canManageTrash ? null : selectedView === 'trash' ? 'trash' : 'library'}
+        onMoveToTrash={() => runTrashAction('moveToTrash')}
+        onRestore={() => runTrashAction('restore')}
+        onDeletePermanently={() => runTrashAction('deletePermanently')}
       />
 
       <BulkEditModal

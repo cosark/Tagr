@@ -6,6 +6,7 @@ import {
   PanelRightIcon,
   PlugIcon,
   SettingsIcon,
+  Trash2Icon,
   UsersIcon,
   type LucideIcon
 } from 'lucide-react'
@@ -23,6 +24,7 @@ import { DetailPanelSettings } from './components/detail-panel-settings'
 import { InsightsSettings } from './components/insights-settings'
 import { LanguageSettings } from './components/language-settings'
 import { ListenBrainzSettings } from './components/listenbrainz-settings'
+import { TrashSettings } from './components/trash-settings'
 import { UsersSettings } from './components/users-settings/users-settings'
 
 interface SettingsSectionDefinition {
@@ -50,6 +52,7 @@ const SETTINGS_SECTIONS = [
     Content: DetailPanelSettings
   },
   { id: 'language', labelKey: 'language', icon: LanguagesIcon, minimumRole: 'listener', Content: LanguageSettings },
+  { id: 'trash', labelKey: 'trash', icon: Trash2Icon, minimumRole: 'admin', Content: TrashSettings },
   { id: 'insights', labelKey: 'insights', icon: ChartNoAxesColumnIcon, minimumRole: 'admin', Content: InsightsSettings }
 ] as const satisfies readonly SettingsSectionDefinition[]
 
