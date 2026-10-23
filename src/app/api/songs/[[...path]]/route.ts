@@ -26,9 +26,12 @@ type FilesResponse = FilesSuccessResponse | FilesErrorResponse
 
 export async function GET(request: Request, { params }: RouteParams): Promise<NextResponse<FilesResponse>> {
   const { path } = await params
-
-  const folderPath = !!path?.length ? '/' + path.join('/') : null
   const { searchParams } = new URL(request.url)
+
+  // The folder comes as a query parameter. As path segments, a single-segment folder such as /music
+  // (MUSIC_FOLDERS=/music,/audiobooks) is routed to /api/songs/[id] instead of this route.
+  const folderParam = getSearchParam(searchParams, 'folderPath', 'string', '')
+  const folderPath = folderParam || (!!path?.length ? '/' + path.join('/') : null)
   const search = getSearchParam(searchParams, 'search', 'string', '') || undefined
   const sortFieldParam = getSearchParam(searchParams, 'sortField', 'string', 'title') as ColumnField
   const sortParam = getSearchParam(searchParams, 'sort', 'string', 'asc') as SongSortDirection

@@ -34,15 +34,9 @@ async function fetchSongsByFolder(
 ): Promise<SongsResponse> {
   const isAll = folderPath === ALL_SONGS_FOLDER_ID
 
-  const encodedPath = isAll
-    ? ''
-    : folderPath
-        .replace(/^\//, '')
-        .split('/')
-        .map(segment => encodeURIComponent(segment))
-        .join('/')
-
+  // As a query parameter, not path segments: /api/songs/music would be taken for a song ID.
   const params: Record<string, string | number | undefined> = {
+    ...(!isAll && { folderPath }),
     search,
     ...sorting,
     limit,
@@ -56,7 +50,7 @@ async function fetchSongsByFolder(
     }
   }
 
-  const { data } = await api.get<SongsResponse>(`/songs/${encodedPath}`, {
+  const { data } = await api.get<SongsResponse>('/songs', {
     params
   })
 
