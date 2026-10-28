@@ -15,6 +15,10 @@
   <sub>Hosted on Fly.io with auto-stop to save costs. First load may take ~30s while the machine wakes up.<br>Demo is read-only: you can browse, filter, scan, view song edit history, and play songs, but metadata editing is disabled.</sub>
 </p>
 
+<p align="center">
+  <sub>DJ with the library you tag here: <a href="https://github.com/suitux/Backspn"><strong>Backspn</strong></a>, free and open source DJ software by me.</sub>
+</p>
+
 Tagr lets you browse, edit, and manage audio file tags from any browser — desktop or mobile. Just point it at your music folders, and get a clean three-panel interface for organizing your library — no desktop apps, no CLI wizardry.
 
 ![Tagr Main Screen](docs/main-screen.png)
@@ -377,6 +381,17 @@ Every tag Tagr reads from or writes to your files goes through **[audiotagr](htt
 It is what actually talks to the audio files: scanning your folders, reading tags and audio properties, and writing your edits back to disk. It handles the per-format differences behind a single API — ID3v2 frames in MP3, Vorbis comments in FLAC and Ogg, iTunes atoms in M4A, ASF descriptors in WMA, APEv2 items — including the quirks that quietly corrupt tags otherwise, such as Style being folded into Genre or BPM landing in a field no reader looks at.
 
 It is published under LGPL-3.0-only, so you can use it in your own projects whatever their license.
+
+---
+
+## Related projects
+
+- **[Backspn](https://github.com/suitux/Backspn)** — a free, open source DJ app for macOS, Windows and Linux,
+  written in Rust: sync, keylock, on-device stem separation and 74 effects, with any controller. Tag your library
+  with Tagr, then mix it with Backspn — it reads the same tags Tagr writes (title, artist, album, genre, label,
+  BPM, key, rating), so your edits show up in its library as they are.
+- **[audiotagr](https://github.com/suitux/audiotagr)** — the tag read/write and scanning library behind Tagr,
+  published separately under LGPL-3.0-only so it can be used in any project.
 
 ---
 
